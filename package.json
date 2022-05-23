@@ -1,0 +1,14 @@
+{
+  "name": "movielister-project",
+  "version": "1.0.0",
+  "description": "This project is part of the Web Architecture course. It is a website that allows to list movies, and sort them by categories.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
