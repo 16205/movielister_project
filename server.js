@@ -1,20 +1,15 @@
+// Imports
 const express = require('express')
-const db = require('./config/database')
+const bodyParser = require('body-parser');
+
+// Server instantiation
 const app = express()
 
-// Connect to database
-db.authenticate()
-    .then(() => {
-        console.log('Connection to database has been established successfully.')
-    })
-    .catch(err => {
-        console.error('Unable to connect to the database:', err)
-    })
-    
-    app.route('/').get((req, res) => {
-        res.send('Hello World!')
-    })
-
+// Body  parser configuration
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());   
+ 
+// Routes
 
 
 // Set port, listen for requests
