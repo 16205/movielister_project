@@ -10,14 +10,15 @@ const YEAR_REGEX = /^[1-2][0,9][0-9][0-9]$/;
 
 // Routes
 module.exports = {
-    getAll: function(req, res) {
+    getAllMovies: function(req, res) {
         // Params
         var order = req.query.order
         
-        // Get all movies, alphabetically ordered by title
+        // Get all movies, alphabetically ordered by title (by default)
         models.movie.findAll({
-            order: [(order != null) ? order : ['title', 'ASC']],
+            order: [(order != null) ? order.split(':') : ['title', 'ASC']],
             attributes: ['title', 'director', 'year'],
+            // Get genres for every movie
             include: [{
                 model: models.genre,
                 attributes: ['name'],
@@ -28,9 +29,9 @@ module.exports = {
         })
         .then(function(movies) {
             if (movies) {
-                res.status(200).json(movies);
+                return res.status(200).json(movies);
             } else {
-                res.status(404).json({ 'message': 'No movies found' })
+                return res.status(404).json({ 'message': 'No movies found' })
             }
         })
         .catch(function(err) {
@@ -38,21 +39,38 @@ module.exports = {
         });
     },
 
-    getOne: function(req, res) {
+    getMovie: function(req, res) {
         models.movie.findOne({
+            attributes: ['title', 'description', 'director', 'year'],
             where: {
-                id: req.body.id
-            }
+                id: req.query.id
+            },
+            include: [{
+                // Get genres for this movie
+                model: models.genre,
+                attributes: ['name'],
+                through: {
+                    attributes: []
+                }
+            },{
+                // Get user who added this movie
+                model: models.user,
+                attributes: ['username']
+            }]
         })
         .then(function(movie) {
-            res.send(movie);
+            if (movie) {
+                return res.status(200).json(movie);
+            } else {
+                return res.status(404).json({ 'error': 'Movie not found' })
+            }
         })
         .catch(function(err) {
-            res.send(err);
+            return res.status(500).json({ 'error': 'Unable to fetch movie' });
         });
     },
 
-    create: function(req, res) {
+    createMovie: function(req, res) {
         var headerAuth = req.headers['authorization'];
         var userId = jwtUtils.getUserId(headerAuth);
 
@@ -171,5 +189,5 @@ module.exports = {
         });
     },
 
-
+    
 };
