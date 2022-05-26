@@ -307,5 +307,52 @@ module.exports = {
         });
     },
 
-    
+    deleteMovie: function(req, res) {
+        var headerAuth = req.headers['authorization'];
+        var userId = jwtUtils.getUserId(headerAuth);
+
+        // Find movie to be deleted
+        models.movie.findOne({
+            where: { id: req.query.id }
+        })
+        .then(function(movieFound) {
+            // If movie exists, delete it, with userId
+            if (movieFound) {
+                // Check if movie belongs to user
+                if (movieFound.users_id == userId) {
+                    // First, delete movie's genre associations
+                    models.movie_has_genres.destroy({
+                        where: { movieId: movieFound.id }
+                    })
+                    // Then, delete movie
+                    .then(function() {
+                        // Delete movie
+                        movieFound.destroy()
+                        // Return success message
+                        .then(function(deletedMovie) {
+                            return res.status(200).json({ 'message': 'Movie deleted' });
+                        })
+                        // If unable to delete movie, return error
+                        .catch(function(err) {
+                            return res.status(500).json({ 'error': 'Unable to delete movie' });
+                        })
+                    })
+                    // If unable to delete movie genre associations, return error
+                    .catch(function(err) {
+                        return res.status(500).json({ 'error': 'Unable to delete movie genre associations' });
+                    })
+                } else {
+                    // If movie doesn't belong to user, return error
+                    return res.status(403).json({ 'error': 'Movie doesn\'t belong to user' });
+                }
+            } else {
+            // If movie doesn't exist, return error
+                return res.status(404).json({ 'error': 'Movie doesn\'t exist' });
+            }
+        })
+        // If unable to look for movie, return error
+        .catch(function(err) {
+            return res.status(500).json({ 'error': 'Unable to look for movie' });
+        });
+    }
 };

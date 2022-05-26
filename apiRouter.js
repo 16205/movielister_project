@@ -18,6 +18,7 @@ exports.router = (function() {
     apiRouter.route('/movies/').get(moviesController.getAllMovies);
     apiRouter.route('/movies/movie').get(moviesController.getMovie);
     apiRouter.route('/movies/update').put(moviesController.updateMovie);
+    apiRouter.route('/movies/delete').delete(moviesController.deleteMovie);
 
     return apiRouter;
 })();
