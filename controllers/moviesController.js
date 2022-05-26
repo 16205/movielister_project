@@ -40,34 +40,69 @@ module.exports = {
     },
 
     getMovie: function(req, res) {
-        models.movie.findOne({
-            attributes: ['title', 'description', 'director', 'year'],
-            where: {
-                id: req.query.id
-            },
-            include: [{
-                // Get genres for this movie
-                model: models.genre,
-                attributes: ['name'],
-                through: {
-                    attributes: []
+        // Params
+        var id = req.params.id;
+        var title = req.query.title;
+        
+        if (id != null) {
+            models.movie.findOne({
+                attributes: ['title', 'description', 'director', 'year'],
+                where: {
+                    id: req.query.id
+                },
+                include: [{
+                    // Get genres for this movie
+                    model: models.genre,
+                    attributes: ['name'],
+                    through: {
+                        attributes: []
+                    }
+                },{
+                    // Get user who added this movie
+                    model: models.user,
+                    attributes: ['username']
+                }]
+            })
+            .then(function(movie) {
+                if (movie) {
+                    return res.status(200).json(movie);
+                } else {
+                    return res.status(404).json({ 'error': 'Movie not found' })
                 }
-            },{
-                // Get user who added this movie
-                model: models.user,
-                attributes: ['username']
-            }]
-        })
-        .then(function(movie) {
-            if (movie) {
-                return res.status(200).json(movie);
-            } else {
-                return res.status(404).json({ 'error': 'Movie not found' })
-            }
-        })
-        .catch(function(err) {
-            return res.status(500).json({ 'error': 'Unable to fetch movie' });
-        });
+            })
+            .catch(function(err) {
+                return res.status(500).json({ 'error': 'Unable to fetch movie' });
+            });
+        } else if (title != null) {
+            models.movie.findOne({
+                attributes: ['title', 'description', 'director', 'year'],
+                where: {
+                    title: req.query.title
+                },
+                include: [{
+                    // Get genres for this movie
+                    model: models.genre,
+                    attributes: ['name'],
+                    through: {
+                        attributes: []
+                    }
+                },{
+                    // Get user who added this movie
+                    model: models.user,
+                    attributes: ['username']
+                }]
+            })
+            .then(function(movie) {
+                if (movie) {
+                    return res.status(200).json(movie);
+                } else {
+                    return res.status(404).json({ 'error': 'Movie not found' })
+                }
+            })
+            .catch(function(err) {
+                return res.status(500).json({ 'error': 'Unable to fetch movie' });
+            });
+        }
     },
 
     createMovie: function(req, res) {
