@@ -44,6 +44,7 @@ module.exports = {
         var id = req.params.id;
         var title = req.query.title;
         
+        // Get movie by id
         if (id != null) {
             models.movie.findOne({
                 attributes: ['title', 'description', 'director', 'year'],
@@ -73,6 +74,8 @@ module.exports = {
             .catch(function(err) {
                 return res.status(500).json({ 'error': 'Unable to fetch movie' });
             });
+
+        // Search movie by title    
         } else if (title != null) {
             models.movie.findOne({
                 attributes: ['title', 'description', 'director', 'year'],
