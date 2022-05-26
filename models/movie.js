@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.movie.hasMany(models.movie_has_genres);
+      models.movie.belongsToMany(models.genre, { through: 'movie_has_genres' });
       models.movie.belongsTo(models.user, {
         foreignKey: 'users_id'
       });

@@ -14,12 +14,17 @@ module.exports = {
         // Params
         var order = req.query.order
         
+        // Get all movies, alphabetically ordered by title
         models.movie.findAll({
             order: [(order != null) ? order : ['title', 'ASC']],
-            include: {
-                model: models.movie_has_genres,
-                include: models.genre
-            }
+            attributes: ['title', 'director', 'year'],
+            include: [{
+                model: models.genre,
+                attributes: ['name'],
+                through: {
+                    attributes: []
+                }
+            }]
         })
         .then(function(movies) {
             if (movies) {
@@ -114,14 +119,14 @@ module.exports = {
                                 // Create movie genre relationship in movie_has_genres table, from movie and newly created genre
                                 .then(function(newGenre) {
                                     models.movie_has_genres.create({
-                                        movies_id: newMovie.id,
-                                        genres_id: newGenre.id
+                                        movieId: newMovie.id,
+                                        genreId: newGenre.id
                                     })
                                 })
                                 // If unable to create genre, return error and delete created movie and genre associations
                                 .catch(function(err) {
                                     models.movie_has_genres.destroy({
-                                        where: { movies_id: newMovie.id }
+                                        where: { movieId: newMovie.id }
                                     })
                                     models.movie.destroy({
                                         where: { id: newMovie.id }
@@ -131,15 +136,15 @@ module.exports = {
                             } else {
                                 // Create movie genre relationship in movie_genre table
                                 models.movie_has_genres.create({
-                                    movies_id: newMovie.id,
-                                    genres_id: genreFound.id
+                                    movieId: newMovie.id,
+                                    genreId: genreFound.id
                                 })
                             }
                         })
                         // If unable to look for genre, return error and delete created movie and genre associations
                         .catch(function(err) {
                             models.movie_has_genres.destroy({
-                                where: { movies_id: newMovie.id }
+                                where: { movieId: newMovie.id }
                             })
                             models.movie.destroy({
                                 where: { id: newMovie.id }
