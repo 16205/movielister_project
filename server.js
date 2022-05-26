@@ -1,19 +1,21 @@
 // Imports
-const express = require('express')
-const bodyParser = require('body-parser');
+var express     = require('express');
+var bodyParser  = require('body-parser');
+var apiRouter   = require('./apiRouter').router;
 
 // Server instantiation
-const app = express()
+var server = express()
 
-// Body  parser configuration
+// Body parser configuration
 server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());   
- 
-// Routes
+server.use(bodyParser.json());
+
+// Configure routes
+server.use('/api', apiRouter);
 
 
 // Set port, listen for requests
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
