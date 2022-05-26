@@ -12,7 +12,10 @@ exports.router = (function() {
     apiRouter.route('/users/login/').post(usersController.login);
     apiRouter.route('/users/me/').get(usersController.getUserProfile);
     apiRouter.route('/users/me/').put(usersController.updateUserProfile);
-    apiRouter.route('/movies/').post(moviesController.create);
+    
+    // Movies routes
+    apiRouter.route('/movies/new').post(moviesController.create);
+    apiRouter.route('/movies/').get(moviesController.getAll);
 
     return apiRouter;
 })();

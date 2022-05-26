@@ -11,19 +11,32 @@ const YEAR_REGEX = /^[1-2][0,9][0-9][0-9]$/;
 // Routes
 module.exports = {
     getAll: function(req, res) {
-        models.movie.findAll()
+        // Params
+        var order = req.query.order
+        
+        models.movie.findAll({
+            order: [(order != null) ? order : ['title', 'ASC']],
+            include: {
+                model: models.movie_has_genres,
+                include: models.genre
+            }
+        })
         .then(function(movies) {
-            res.send(movies);
+            if (movies) {
+                res.status(200).json(movies);
+            } else {
+                res.status(404).json({ 'message': 'No movies found' })
+            }
         })
         .catch(function(err) {
-            res.send(err);
+            return res.status(500).json({ 'error': 'Unable to fetch movies' });
         });
     },
 
     getOne: function(req, res) {
         models.movie.findOne({
             where: {
-                id: req.params.id
+                id: req.body.id
             }
         })
         .then(function(movie) {
@@ -43,10 +56,10 @@ module.exports = {
         var description = req.body.description;
         var director    = req.body.director;
         var year        = req.body.year;
-        var genres      = req.body.genres;
+        var genres      = req.body.genres; 
 
         // Check for empty params
-        if (title == null || director == null || year == null || genres == null) {
+        if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0 || genres == null || genres.length == 0) {
             return res.status(400).json({ 'error': 'Missing parameters' });
         }
 
@@ -98,23 +111,21 @@ module.exports = {
                                 models.genre.create({
                                     name: genre
                                 })
+                                // Create movie genre relationship in movie_has_genres table, from movie and newly created genre
                                 .then(function(newGenre) {
-                                    // Create movie genre relationship in movie_has_genres table, from movie and newly created genre
                                     models.movie_has_genres.create({
                                         movies_id: newMovie.id,
                                         genres_id: newGenre.id
                                     })
-                                    // Return movie, and movie genre relationship
-                                    .then(function(movie_genres) {
-                                        return res.status(201).json(newMovie, movie_genres);
-                                    })
-                                    // If unable to create movie genre relationship, return error
-                                    .catch(function(err) {
-                                        return res.status(500).json({ 'error': 'Unable to create movie genre association' });
-                                    });
                                 })
-                                // If unable to create genre, return error
+                                // If unable to create genre, return error and delete created movie and genre associations
                                 .catch(function(err) {
+                                    models.movie_has_genres.destroy({
+                                        where: { movies_id: newMovie.id }
+                                    })
+                                    models.movie.destroy({
+                                        where: { id: newMovie.id }
+                                    })
                                     return res.status(500).json({ 'error': 'Unable to create genre' });
                                 });
                             } else {
@@ -123,21 +134,26 @@ module.exports = {
                                     movies_id: newMovie.id,
                                     genres_id: genreFound.id
                                 })
-                                // Return movie, and movie genre relationship
-                                .then(function(movie_genres) {
-                                    return res.status(201).json(newMovie, movie_genres);
-                                })
-                                // If unable to create movie genre relationship, return error
-                                .catch(function(err) {
-                                    return res.status(500).json({ 'error': 'Unable to create movie genre association' });
-                                });
                             }
                         })
-                    })    
-                    // If unable to check if genre exists, return error
-                    .catch(function(err) {
-                        return res.status(500).json({ 'error': 'Unable to look up genre' });
+                        // If unable to look for genre, return error and delete created movie and genre associations
+                        .catch(function(err) {
+                            models.movie_has_genres.destroy({
+                                where: { movies_id: newMovie.id }
+                            })
+                            models.movie.destroy({
+                                where: { id: newMovie.id }
+                            })
+                            return res.status(500).json({ 'error': 'Unable to look up genres' });
+                        });
                     })
+                    // Return new movie, and new movie genre relationship, after creating relationships with all given genres
+                    return res.status(201).json(newMovie);
+                })
+                // If unable to create movie, return error
+                .catch(function(err) {
+
+                    return res.status(500).json({ 'error': 'Unable to create movie' });
                 })
             } else {
                 // If movie exists, return error
@@ -148,5 +164,7 @@ module.exports = {
         .catch(function(err) {
             return res.status(500).json({ 'error': 'Unable to verify if movie exists' });
         });
-    }
+    },
+
+
 };
