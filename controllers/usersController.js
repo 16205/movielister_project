@@ -193,7 +193,7 @@ module.exports = {
         })
         // If unable to check if user exists, return error
         .catch(function(err) {
-            return res.status(500).json({ 'error': 'Unable to fetch user' });
+            return res.status(500).json({ 'error': 'Unable to verify user' });
         })
     },
 }
