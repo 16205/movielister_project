@@ -2,6 +2,7 @@
 var express = require('express');
 var usersController = require('./controllers/usersController');
 var moviesController = require('./controllers/moviesController');
+var genresController = require('./controllers/genresController');
 
 // Router
 exports.router = (function() {
@@ -20,6 +21,9 @@ exports.router = (function() {
     apiRouter.route('/movies/update').put(moviesController.updateMovie);
     apiRouter.route('/movies/delete').delete(moviesController.deleteMovie);
     apiRouter.route('/movies/search').get(moviesController.getMovie);
+
+    // Genres routes
+    apiRouter.route('/genres/').get(genresController.getAllGenres);
 
     return apiRouter;
 })();
