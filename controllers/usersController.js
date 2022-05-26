@@ -21,12 +21,12 @@ module.exports = {
             return res.status(400).json({ 'error': 'Missing parameters' });
         }
 
-        // Check for parameters length
+        // Check username length
         if (username.length >= 20 || username.length <= 4) {
             return res.status(400).json({ 'error': 'Username must be between 4 and 20 characters' });
         }
 
-        // Check for password length
+        // Check password validity
         if (!PASSWORD_REGEX.test(password)) {
             return res.status(400).json({ 'error': 'Password must be between 4 and 8 characters and contain at least one number' });
         }
@@ -152,6 +152,16 @@ module.exports = {
         // Check if userId has been verified
         if (userId < 0) {
             return res.status(400).json({ 'error': 'Invalid token' });
+        }
+
+        // Check username length
+        if (username.length >= 20 || username.length <= 4) {
+            return res.status(400).json({ 'error': 'Username must be between 4 and 20 characters' });
+        }
+
+        // Check password validity
+        if (!PASSWORD_REGEX.test(password)) {
+            return res.status(400).json({ 'error': 'Password must be between 4 and 8 characters and contain at least one number' });
         }
 
         // Find user in database with id from token
