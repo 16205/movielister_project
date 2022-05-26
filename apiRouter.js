@@ -24,6 +24,7 @@ exports.router = (function() {
 
     // Genres routes
     apiRouter.route('/genres/').get(genresController.getAllGenres);
+    apiRouter.route('/genres/update').put(genresController.updateGenre);
 
     return apiRouter;
 })();

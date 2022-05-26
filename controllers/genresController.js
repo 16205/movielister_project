@@ -29,4 +29,34 @@ module.exports = {
             return res.status(500).json({ 'error': 'Unable to fetch genres' });
         });
     },
+
+    updateGenre: function(req, res) {
+        // Params
+        var id = req.body.id;
+        var newName = req.body.name;
+        
+        models.genre.findOne({
+            where: {
+                id: id
+            }
+        })
+        .then(function (genre) {
+            if (genre) {
+                genre.update({
+                    name: newName
+                })
+                .then(function (genre) {
+                    return res.status(200).json(genre);
+                })
+                .catch(function (err) {
+                    return res.status(500).json({ 'error': 'Unable to update genre' });
+                });
+            } else {
+                return res.status(404).json({ 'error': 'Genre not found' });
+            }
+        })
+        .catch(function (err) {
+            return res.status(500).json({ 'error': 'Unable to fetch genre' });
+        });
+    }
 }
