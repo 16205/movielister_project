@@ -189,5 +189,123 @@ module.exports = {
         });
     },
 
+    updateMovie: function(req, res) {
+        var headerAuth = req.headers['authorization'];
+        var userId = jwtUtils.getUserId(headerAuth);
+
+        // Params
+        var id          = req.body.id;
+        var title       = req.body.title;
+        var description = req.body.description;
+        var director    = req.body.director;
+        var year        = req.body.year;
+        var genres      = req.body.genres; 
+
+        // Check for empty params
+        if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0 || genres == null || genres.length == 0) {
+            return res.status(400).json({ 'error': 'Empty parameters' });
+        }
+
+        // Check for title length
+        if (title.length > TITLE_LIMIT) {
+            return res.status(400).json({ 'error': 'Title must be less than ' + TITLE_LIMIT + ' characters' });
+        }
+
+        // Check for description length
+        if (description.length > DESCRIPTION_LIMIT) {
+            return res.status(400).json({ 'error': 'Description must be less than ' + DESCRIPTION_LIMIT + ' characters' });
+        }
+        
+        // Check for director length
+        if (director.length > DIRECTOR_LIMIT) {
+            return res.status(400).json({ 'error': 'Director must be less than ' + DIRECTOR_LIMIT + ' characters' });
+        }
+
+        // Check year format
+        if (!YEAR_REGEX.test(year)) {
+            return res.status(400).json({ 'error': 'Year must be a 4 digits number between 1900 and 2099' });
+        }
+
+        // Find movie to be updated
+        models.movie.findOne({
+            where: { id: id }
+        })
+        .then(function(movieFound) {
+            // If movie exists, update it, with userId
+            if (movieFound) {
+                // Check if movie belongs to user
+                if (movieFound.users_id == userId) {
+                    // Update movie
+                    movieFound.update({
+                        title: title,
+                        description: (description ? description : description),
+                        director: director,
+                        year: year
+                    })
+                    // Add movie genre relationship
+                    .then(function(updatedMovie) {
+                        // Delete old genre relationships
+                        models.movie_has_genres.destroy({
+                            where: { movieId: updatedMovie.id }
+                        })
+
+                        // Iterate through given genres
+                        genres.forEach(genre => {    
+                            // Check for existing genre
+                            models.genre.findOne({
+                                where: { name: genre }
+                            })
+                            .then(function(genreFound) {
+                                // If genre doesn't exist, create it
+                                if (!genreFound) {
+                                    models.genre.create({
+                                        name: genre
+                                    })
+                                    // Create movie genre relationship in movie_has_genres table, from movie and newly created genre
+                                    .then(function(newGenre) {
+                                        models.movie_has_genres.create({
+                                            movieId: updatedMovie.id,
+                                            genreId: newGenre.id
+                                        })
+                                    })
+                                    // If unable to create genre, return error and delete created movie and genre associations
+                                    .catch(function(err) {
+                                        return res.status(500).json({ 'error': 'Unable to create genre' });
+                                    });
+                                } else {
+                                    // Create movie genre relationship in movie_genre table
+                                    models.movie_has_genres.create({
+                                        movieId: updatedMovie.id,
+                                        genreId: genreFound.id
+                                    })
+                                }
+                            })
+                            // If unable to look for genre, return error and delete created movie and genre associations
+                            .catch(function(err) {
+                                return res.status(500).json({ 'error': 'Unable to look up genres' });
+                            });
+                        })
+                        // Return updated movie, and updated movie genre relationship, after creating relationships with all given genres
+                        return res.status(200).json(updatedMovie);
+                    })
+                    // If unable to update movie, return error
+                    .catch(function(err) {
+                        return res.status(500).json({ 'error': 'Unable to update movie' });
+                    })
+                } else {
+                    // If movie doesn't belong to user, return error
+                    return res.status(403).json({ 'error': 'Movie doesn\'t belong to user' });
+                }
+            } else {
+            // If movie doesn't exist, return error
+                return res.status(404).json({ 'error': 'Movie doesn\'t exist' });
+            }
+        })
+        // If unable to look for movie, return error
+        .catch(function(err) {
+            return res.status(500).json({ 'error': 'Unable to look for movie' });
+        });
+    },
+
     
 };

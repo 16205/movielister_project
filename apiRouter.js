@@ -17,6 +17,7 @@ exports.router = (function() {
     apiRouter.route('/movies/new').post(moviesController.createMovie);
     apiRouter.route('/movies/').get(moviesController.getAllMovies);
     apiRouter.route('/movies/movie').get(moviesController.getMovie);
+    apiRouter.route('/movies/update').put(moviesController.updateMovie);
 
     return apiRouter;
 })();
