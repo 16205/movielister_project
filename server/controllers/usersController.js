@@ -272,5 +272,21 @@ module.exports = {
         })
     },
 
-
+    getAllUsers: function(req, res) {
+        models.user.findAll({
+            attributes: ['id', 'username'],
+        })
+        // Return user in response
+        .then(function(usersFound) {
+            if (usersFound) {
+                return res.status(200).json(usersFound);
+            } else {
+                return res.status(404).json({ 'message': 'No users found' });
+            }
+        })
+        // If unable to check users, return error
+        .catch(function(err) {
+            return res.status(500).json({ 'error': 'Unable to fetch users' });
+        })
+    }
 }

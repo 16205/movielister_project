@@ -11,6 +11,7 @@ exports.router = (function() {
     // Users routes
     apiRouter.route('/users/register/').post(usersController.register);
     apiRouter.route('/users/login/').post(usersController.login);
+    apiRouter.route('/users/').get(usersController.getAllUsers);
     apiRouter.route('/users/').get(usersController.getUserProfile);
     apiRouter.route('/users/me/').get(usersController.getUserProfile);
     apiRouter.route('/users/me/update').put(usersController.updateUserProfile);
