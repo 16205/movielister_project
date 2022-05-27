@@ -122,7 +122,18 @@ module.exports = {
         // Find user in database with id from token
         models.user.findOne({
             attributes: ['id', 'username', 'firstname', 'lastname'],
-            where: { id: userId }
+            where: { id: userId },
+            include: { 
+                model: models.movie,
+                attributes: ['title', 'description', 'director', 'year', 'createdAt', 'updatedAt'],
+                include: {
+                    model: models.genre,
+                    attributes: ['name'],
+                    through: {
+                        attributes: []
+                    }
+                }
+            }
         })
         // Return user in response
         .then(function(user) {
