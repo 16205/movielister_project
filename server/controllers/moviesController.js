@@ -125,22 +125,22 @@ module.exports = {
         }
 
         // Check for empty params
-        if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0) {
+        if (title == null || director == null || year == null) {
             return res.status(400).json({ 'error': 'Missing parameters' });
         }
 
         // Check for title length
-        if (title.length > TITLE_LIMIT) {
+        if (!(TITLE_LIMIT > title.length > 0)) {
             return res.status(400).json({ 'error': 'Title must be less than ' + TITLE_LIMIT + ' characters' });
         }
 
         // Check for description length
-        if (description.length > DESCRIPTION_LIMIT) {
+        if (!(DESCRIPTION_LIMIT > description.length > 0)) {
             return res.status(400).json({ 'error': 'Description must be less than ' + DESCRIPTION_LIMIT + ' characters' });
         }
         
         // Check for director length
-        if (director.length > DIRECTOR_LIMIT) {
+        if (DIRECTOR_LIMIT > director.length > 0) {
             return res.status(400).json({ 'error': 'Director must be less than ' + DIRECTOR_LIMIT + ' characters' });
         }
 
