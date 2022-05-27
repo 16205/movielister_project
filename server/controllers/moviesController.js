@@ -125,7 +125,7 @@ module.exports = {
         }
 
         // Check for empty params
-        if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0 || genres == null || genres.length == 0) {
+        if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0) {
             return res.status(400).json({ 'error': 'Missing parameters' });
         }
 
@@ -165,60 +165,65 @@ module.exports = {
                 })
                 // Add movie genre relationship
                 .then(function(newMovie) {
-                    // Iterate through given genres
-                    genres.forEach(genre => {    
-                        // Check for existing genre
-                        models.genre.findOne({
-                            where: { name: genre }
-                        })
-                        .then(function(genreFound) {
-                            // If genre doesn't exist, create it
-                            if (!genreFound) {
-                                models.genre.create({
-                                    name: genre
-                                })
-                                // Create movie genre relationship in movie_has_genres table, from movie and newly created genre
-                                .then(function(newGenre) {
+                    // if genre given
+                    if (genres != null) {
+                        // Iterate through given genres
+                        genres.forEach(genre => {    
+                            // Check for existing genre
+                            models.genre.findOne({
+                                where: { name: genre }
+                            })
+                            .then(function(genreFound) {
+                                // If genre doesn't exist, create it
+                                if (!genreFound) {
+                                    models.genre.create({
+                                        name: genre
+                                    })
+                                    // Create movie genre relationship in movie_has_genres table, from movie and newly created genre
+                                    .then(function(newGenre) {
+                                        models.movie_has_genres.create({
+                                            movieId: newMovie.id,
+                                            genreId: newGenre.id
+                                        })
+                                    })
+                                    // If unable to create genre, return error and delete created movie and genre associations
+                                    .catch(function(err) {
+                                        models.movie_has_genres.destroy({
+                                            where: { movieId: newMovie.id }
+                                        })
+                                        models.movie.destroy({
+                                            where: { id: newMovie.id }
+                                        })
+                                        return res.status(500).json({ 'error': 'Unable to create genre' });
+                                    });
+                                } else {
+                                    // Create movie genre relationship in movie_genre table
                                     models.movie_has_genres.create({
                                         movieId: newMovie.id,
-                                        genreId: newGenre.id
+                                        genreId: genreFound.id
                                     })
+                                }
+                            })
+                            // If unable to look for genre, return error and delete created movie and genre associations
+                            .catch(function(err) {
+                                models.movie_has_genres.destroy({
+                                    where: { movieId: newMovie.id }
                                 })
-                                // If unable to create genre, return error and delete created movie and genre associations
-                                .catch(function(err) {
-                                    models.movie_has_genres.destroy({
-                                        where: { movieId: newMovie.id }
-                                    })
-                                    models.movie.destroy({
-                                        where: { id: newMovie.id }
-                                    })
-                                    return res.status(500).json({ 'error': 'Unable to create genre' });
-                                });
-                            } else {
-                                // Create movie genre relationship in movie_genre table
-                                models.movie_has_genres.create({
-                                    movieId: newMovie.id,
-                                    genreId: genreFound.id
+                                models.movie.destroy({
+                                    where: { id: newMovie.id }
                                 })
-                            }
+                                return res.status(500).json({ 'error': 'Unable to look up genres' });
+                            });
                         })
-                        // If unable to look for genre, return error and delete created movie and genre associations
-                        .catch(function(err) {
-                            models.movie_has_genres.destroy({
-                                where: { movieId: newMovie.id }
-                            })
-                            models.movie.destroy({
-                                where: { id: newMovie.id }
-                            })
-                            return res.status(500).json({ 'error': 'Unable to look up genres' });
-                        });
-                    })
-                    // Return new movie, and new movie genre relationship, after creating relationships with all given genres
-                    return res.status(201).json(newMovie);
+                        // Return new movie, and new movie genre relationship, after creating relationships with all given genres
+                        return res.status(201).json(newMovie);
+                    } else {
+                        // Return new movie
+                        return res.status(201).json(newMovie);
+                    }
                 })
                 // If unable to create movie, return error
                 .catch(function(err) {
-
                     return res.status(500).json({ 'error': 'Unable to create movie' });
                 })
             } else {
