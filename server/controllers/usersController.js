@@ -213,6 +213,7 @@ module.exports = {
         })
     },
 
+    // Does not work (sets movies' user_id to null, but still enters catch)
     deleteUser: function(req, res) {
         // Get auth header
         var headerAuth  = req.headers['authorization'];
@@ -230,14 +231,36 @@ module.exports = {
         // Delete user in database
         .then(function(userFound) {
             if (userFound) {
-                userFound.destroy()
-                // Return user in response
-                .then(function(userFound) {
-                    return res.status(200).json({ 'message': 'User deleted successfully' });
+                // Set movies' created by this user 'user_id' to null
+                models.movie.findAll({
+                    // attributes: ['user_id'],
+                    where: { users_id: userId }
                 })
-                // Catch errors
+                .then(function(movieFound) {
+                    if (movieFound) {
+                        movieFound.forEach(movie => {
+                            movie.update({
+                                users_id: null
+                            })
+                        })
+                        .then(function() {
+                            userFound.destroy()
+                            // Return user in response
+                            .then(function() {
+                                return res.status(200).json({ 'message': 'User deleted successfully' });
+                            })
+                            // Catch errors
+                            .catch(function(err) {
+                                return res.status(500).json({ 'error': 'Unable to delete user' });
+                            });
+                        })
+                        .catch(function(err) {
+                            return res.status(500).json({ 'error': 'Unable to update movie' });
+                        });
+                    }
+                })  
                 .catch(function(err) {
-                    return res.status(500).json({ 'error': 'Unable to delete user' });
+                    return res.status(500).json({ 'error': 'Unable to fetch movies' });
                 });
             } else {
                 return res.status(404).json({ 'error': 'User not found' });
@@ -248,5 +271,6 @@ module.exports = {
             return res.status(500).json({ 'error': 'Unable to verify user' });
         })
     },
+
 
 }
