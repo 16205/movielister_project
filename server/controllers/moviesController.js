@@ -223,7 +223,7 @@ module.exports = {
                 })
             } else {
                 // If movie exists, return error
-                return res.status(404).json({ 'error': 'Movie already exists' });
+                return res.status(409).json({ 'error': 'Movie already exists' });
             }
         })
         // If unable to check if movie exists, return error
@@ -358,6 +358,11 @@ module.exports = {
     deleteMovie: function(req, res) {
         var headerAuth = req.headers['authorization'];
         var userId = jwtUtils.getUserId(headerAuth);
+
+        // Check if userId has been verified
+        if (userId < 0) {
+            return res.status(400).json({ 'error': 'Invalid token' });
+        }
 
         // Find movie to be deleted
         models.movie.findOne({
