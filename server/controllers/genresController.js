@@ -31,6 +31,15 @@ module.exports = {
     },
 
     updateGenre: function(req, res) {
+        // Get auth header
+        var headerAuth  = req.headers['authorization'];
+        var userId      = jwtUtils.getUserId(headerAuth);
+
+        // Check if userId has been verified
+        if (userId < 0) {
+            return res.status(400).json({ 'error': 'Invalid token' });
+        }
+
         // Params
         var id = req.body.id;
         var newName = req.body.name;
