@@ -119,6 +119,11 @@ module.exports = {
         var year        = req.body.year;
         var genres      = req.body.genres; 
 
+        // Check if token is valid
+        if (userId < 0) {
+            return res.status(400).json({ 'error': 'Invalid token' });
+        }
+
         // Check for empty params
         if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0 || genres == null || genres.length == 0) {
             return res.status(400).json({ 'error': 'Missing parameters' });
@@ -238,6 +243,11 @@ module.exports = {
         var director    = req.body.director;
         var year        = req.body.year;
         var genres      = req.body.genres; 
+
+        // Check if token is valid
+        if (userId < 0) {
+            return res.status(400).json({ 'error': 'Invalid token' });
+        }
 
         // Check for empty params
         if (title == null || title.length == 0 || director == null || director.length == 0 || year == null || year.length == 0 || genres == null || genres.length == 0) {
