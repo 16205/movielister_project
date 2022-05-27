@@ -13,6 +13,7 @@ exports.router = (function() {
     apiRouter.route('/users/login/').post(usersController.login);
     apiRouter.route('/users/me/').get(usersController.getUserProfile);
     apiRouter.route('/users/me/').put(usersController.updateUserProfile);
+    apiRouter.route('/users/').get(usersController.getUserProfile);
     
     // Movies routes
     apiRouter.route('/movies/new').post(moviesController.createMovie);
