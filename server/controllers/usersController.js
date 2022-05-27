@@ -213,5 +213,40 @@ module.exports = {
         })
     },
 
-    
+    deleteUser: function(req, res) {
+        // Get auth header
+        var headerAuth  = req.headers['authorization'];
+        var userId      = jwtUtils.getUserId(headerAuth);
+
+        // Check if userId has been verified
+        if (userId < 0) {
+            return res.status(400).json({ 'error': 'Invalid token' });
+        }
+
+        // Find user in database with id from token
+        models.user.findOne({
+            where: { id: userId }
+        })
+        // Delete user in database
+        .then(function(userFound) {
+            if (userFound) {
+                userFound.destroy()
+                // Return user in response
+                .then(function(userFound) {
+                    return res.status(200).json({ 'message': 'User deleted successfully' });
+                })
+                // Catch errors
+                .catch(function(err) {
+                    return res.status(500).json({ 'error': 'Unable to delete user' });
+                });
+            } else {
+                return res.status(404).json({ 'error': 'User not found' });
+            }
+        })
+        // If unable to check if user exists, return error
+        .catch(function(err) {
+            return res.status(500).json({ 'error': 'Unable to verify user' });
+        })
+    },
+
 }
