@@ -4,186 +4,978 @@ x-stoplight:
 info:
   title: MovieListerAPI
   version: '1.0'
+  summary: Website dedicated to listing movies
+  description: 'Website can be used without a login to view listed movies and genres, and classify them by genre, director, relese year, check movie info, and search movie by title. With user account, possibility to add movies, and update/delete owned movies, as well as all functionalities available to non-users.'
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:3000/api'
+    description: MovieLister
 paths:
-  '/users/{userId}':
-    parameters:
-      - schema:
-          type: integer
-        name: userId
-        in: path
-        required: true
-        description: Id of an existing user.
+  /users/register:
+    post:
+      summary: Register new user
+      operationId: post-users-register
+      responses:
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      description: Register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  username: gablohest
+                  password: azerty1234
+                  firstname: gabriel
+                  lastname: lohest
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+              required:
+                - username
+                - password
+                - firstname
+                - lastname
+            examples:
+              example-1:
+                value:
+                  username: gablohest
+                  password: azerty1234
+                  firstname: gabriel
+                  lastname: lohest
+    parameters: []
+  /users/login:
+    post:
+      summary: Log in existing user
+      operationId: post-users-login
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                  token:
+                    type: string
+                x-examples:
+                  example-1:
+                    userId: 1
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOmZhbHNlLCJpYXQiOjE2NTM2NDE3MjcsImV4cCI6MTY1MzY0NTMyN30.fAPhp7s1UNydVMR9VrPMOD0GB92B-zflNC-9lW0BZtM
+              examples:
+                example-1:
+                  value:
+                    userId: 1
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOmZhbHNlLCJpYXQiOjE2NTM2NDE3MjcsImV4cCI6MTY1MzY0NTMyN30.fAPhp7s1UNydVMR9VrPMOD0GB92B-zflNC-9lW0BZtM
+        '403':
+          description: 'Forbidden: wrong password'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Log in existing user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  username: gablohest
+                  password: azerty1234
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            examples:
+              example-1:
+                value:
+                  username: gablohest
+                  password: azerty1234
+    parameters: []
+  /users:
     get:
-      summary: Get User Info by User ID
+      summary: Get all users
       tags: []
       responses:
         '200':
-          description: User Found
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    username:
+                      type: string
+                x-examples:
+                  example-1:
+                    - id: 1
+                      username: gablohest
+                    - id: 2
+                      username: gabrilohest
               examples:
-                Get User Alice Smith:
+                example-1:
                   value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    signUpDate: '2019-08-24'
+                    - id: 1
+                      username: gablohest
+                    - id: 2
+                      username: gabrilohest
         '404':
-          description: User Not Found
-      operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID.
-    patch:
-      summary: Update User Information
-      operationId: patch-users-userId
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-users
+      description: Get all users
+  /users/user:
+    get:
+      summary: Get any user profile by id
+      tags: []
       responses:
         '200':
-          description: User Updated
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  firstname:
+                    type: string
+                  lastname:
+                    type: string
+                  movies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        director:
+                          type: string
+                        year:
+                          type: integer
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        genres:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                x-examples:
+                  example-1:
+                    id: 1
+                    username: gablohest
+                    firstname: gabriel
+                    lastname: lohest
+                    movies:
+                      - title: Avatar
+                        description: Very very cool movie
+                        director: James Cameron
+                        year: 2009
+                        createdAt: '2022-05-26T21:22:09.000Z'
+                        updatedAt: '2022-05-27T11:40:32.000Z'
+                        genres:
+                          - name: Sci-fi
+                      - title: Inception
+                        description: Very cool movie
+                        director: Christopher Nolan
+                        year: 2010
+                        createdAt: '2022-05-26T23:27:45.000Z'
+                        updatedAt: '2022-05-27T11:40:32.000Z'
+                        genres:
+                          - name: Thriller
+                          - name: Sci-fi
               examples:
-                Updated User Rebecca Baker:
+                example-1:
                   value:
-                    id: 13
-                    firstName: Rebecca
-                    lastName: Baker
-                    email: rebecca@gmail.com
-                    dateOfBirth: '1985-10-02'
-                    emailVerified: false
-                    createDate: '2019-08-24'
+                    id: 2
+                    username: gabrilohest
+                    firstname: gabriel
+                    lastname: lohest
+                    movies: []
         '404':
-          description: User Not Found
-        '409':
-          description: Email Already Taken
-      description: Update the information of an existing user.
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-users-user
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: id
+          description: User id
+      description: Get any user profile by id
+  /users/me:
+    get:
+      summary: Get logged in user profile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  firstname:
+                    type: string
+                  lastname:
+                    type: string
+                  movies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        director:
+                          type: string
+                        year:
+                          type: integer
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        genres:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                x-examples:
+                  example-1:
+                    id: 1
+                    username: gablohest
+                    firstname: gabriel
+                    lastname: lohest
+                    movies:
+                      - title: Avatar
+                        description: Very very cool movie
+                        director: James Cameron
+                        year: 2009
+                        createdAt: '2022-05-26T21:22:09.000Z'
+                        updatedAt: '2022-05-27T11:40:32.000Z'
+                        genres:
+                          - name: Sci-fi
+                      - title: Inception
+                        description: Very cool movie
+                        director: Christopher Nolan
+                        year: 2010
+                        createdAt: '2022-05-26T23:27:45.000Z'
+                        updatedAt: '2022-05-27T11:40:32.000Z'
+                        genres:
+                          - name: Thriller
+                          - name: Sci-fi
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    username: gablohest
+                    firstname: gabriel
+                    lastname: lohest
+                    movies:
+                      - title: Avatar
+                        description: Very very cool movie
+                        director: James Cameron
+                        year: 2009
+                        createdAt: '2022-05-26T21:22:09.000Z'
+                        updatedAt: '2022-05-27T11:40:32.000Z'
+                        genres:
+                          - name: Sci-fi
+                      - title: Inception
+                        description: Very cool movie
+                        director: Christopher Nolan
+                        year: 2010
+                        createdAt: '2022-05-26T23:27:45.000Z'
+                        updatedAt: '2022-05-27T11:40:32.000Z'
+                        genres:
+                          - name: Thriller
+                          - name: Sci-fi
+      operationId: get-users-me
+      description: Get logged in user profile
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          required: true
+        - schema:
+            type: string
+          in: header
+          required: true
+          name: Authorization
+          description: Bearer token
+    parameters: []
+  /users/me/update:
+    put:
+      summary: Update logged in user profile
+      operationId: put-users-me-update
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  firstname:
+                    type: string
+                  lastname:
+                    type: string
+                x-examples:
+                  example-1:
+                    id: 1
+                    username: gabriellohest
+                    firstname: gabriel
+                    lastname: lohest
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    username: gabriellohest
+                    firstname: gabriel
+                    lastname: lohest
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer token
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                firstName:
+                username:
                   type: string
-                lastName:
+                password:
                   type: string
-                email:
+                firstname:
                   type: string
-                  description: 'If a new email is given, the user''s email verified property will be set to false.'
-                dateOfBirth:
+                lastname:
                   type: string
+              x-examples:
+                example-1:
+                  username: gabriellohest
+                  password: password8
+                  firstname: gabriel
+                  lastname: lohest
             examples:
-              Update First Name:
+              example-1:
                 value:
-                  firstName: Rebecca
-              Update Email:
-                value:
-                  email: rebecca@gmail.com
-              Update Last Name & Date of Birth:
-                value:
-                  lastName: Baker
-                  dateOfBirth: '1985-10-02'
-        description: Patch user properties to update.
-  /user:
+                  username: gabriellohest
+                  password: password8
+                  firstname: gabriel
+                  lastname: lohest
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      description: Update logged in user profile
+  /users/me/delete:
+    delete:
+      summary: Delete logged in user
+      operationId: delete-users-me-delete
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Delete logged in user
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer token
+  /movies/new:
     post:
-      summary: Create New User
-      operationId: post-user
+      summary: Create new movie
+      operationId: post-movies-new
       responses:
-        '200':
-          description: User Created
+        '201':
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  director:
+                    type: string
+                  year:
+                    type: integer
+                  users_id:
+                    type: integer
+                  updatedAt:
+                    type: string
+                  createdAt:
+                    type: string
+                x-examples:
+                  example-1:
+                    id: 9
+                    title: Avatar
+                    description: Very very cool movie
+                    director: James Cameron
+                    year: 2009
+                    users_id: 1
+                    updatedAt: '2022-05-27T12:36:40.733Z'
+                    createdAt: '2022-05-27T12:36:40.733Z'
               examples:
-                New User Bob Fellow:
+                example-1:
                   value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
+                    id: 9
+                    title: Avatar
+                    description: Very very cool movie
+                    director: James Cameron
+                    year: 2009
+                    users_id: 1
+                    updatedAt: '2022-05-27T12:36:40.733Z'
+                    createdAt: '2022-05-27T12:36:40.733Z'
         '400':
-          description: Missing Required Information
+          description: Bad Request
         '409':
-          description: Email Already Taken
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      description: 'Add title, description (optional), director, year, genre(s)'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  title: Inception
+                  description: Very cool movie
+                  director: Christopher Nolan
+                  year: 2010
+                  genres:
+                    - Thriller
+                    - Sci-fi
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                director:
+                  type: string
+                year:
+                  type: integer
+                genres:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - title
+                - director
+                - year
+  /movies/movie/update:
+    parameters: []
+    put:
+      summary: Update movie
+      operationId: put-movies-movie-update
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  director:
+                    type: string
+                  year:
+                    type: integer
+                  users_id:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                x-examples:
+                  example-1:
+                    id: 9
+                    title: Inception
+                    description: Very nice movie
+                    director: Christopher Nolan
+                    year: 2010
+                    users_id: 1
+                    createdAt: '2022-05-27T12:36:40.000Z'
+                    updatedAt: '2022-05-27T12:42:14.961Z'
+              examples:
+                example-1:
+                  value:
+                    id: 9
+                    title: Inception
+                    description: Very nice movie
+                    director: Christopher Nolan
+                    year: 2010
+                    users_id: 1
+                    createdAt: '2022-05-27T12:36:40.000Z'
+                    updatedAt: '2022-05-27T12:42:14.961Z'
+        '400':
+          description: Bad Request
+        '403':
+          description: 'Forbidden: movie does not belong to user'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Update movie
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  id: 9
+                  title: Inception
+                  description: Very nice movie
+                  director: Christopher Nolan
+                  year: 2010
+                  genres:
+                    - Sci-fi
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                description:
+                  type: string
+                director:
+                  type: string
+                year:
+                  type: integer
+                genres:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - id
+            examples:
+              example-1:
+                value:
+                  id: 9
+                  title: Inception
+                  description: Very nice movie
+                  director: Christopher Nolan
+                  year: 2010
+                  genres:
+                    - Sci-fi
+  /movies/movie/delete:
+    delete:
+      summary: Delete movie
+      operationId: delete-movies-movie-delete
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                x-examples:
+                  example-1:
+                    message: Movie deleted
+              examples:
+                example-1:
+                  value:
+                    message: Movie deleted
+        '400':
+          description: 'Bad Request: invalid token'
+        '403':
+          description: 'Forbidden: movie does not belong to user'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Delete movie
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer token
+        - schema:
+            type: string
+          in: query
+          name: id
+          description: id of movie to be deleted
+          required: true
+  /movies/search:
+    get:
+      summary: Search movie
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  director:
+                    type: string
+                  year:
+                    type: integer
+                  genres:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                x-examples:
+                  example-1:
+                    title: Inception
+                    description: Very cool movie
+                    director: Christopher Nolan
+                    year: 2010
+                    genres:
+                      - name: Thriller
+                      - name: Sci-fi
+                    user:
+                      username: gabrilohest
+              examples:
+                example-1:
+                  value:
+                    title: Inception
+                    description: Very cool movie
+                    director: Christopher Nolan
+                    year: 2010
+                    genres:
+                      - name: Thriller
+                      - name: Sci-fi
+                    user:
+                      username: gabrilohest
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-movies-search
+      description: Search movie
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: title
+          required: true
+          description: title to search
+  /genres:
+    get:
+      summary: Get all genres
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    movies:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                x-examples:
+                  example-1:
+                    - name: Fuck
+                      movies: []
+                    - name: Sci-fi
+                      movies:
+                        - title: Inception
+                    - name: Thriller
+                      movies:
+                        - title: Inception
+              examples:
+                example-1:
+                  value:
+                    - name: Sci-fi
+                      movies:
+                        - title: Inception
+                        - title: Avatar
+                    - name: Thriller
+                      movies:
+                        - title: Inception
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-genres
+      description: Get all genres
+  /genres/update:
+    put:
+      summary: Update genre
+      operationId: put-genres-update
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                x-examples:
+                  example-1:
+                    id: 2
+                    name: Science-fiction
+                    createdAt: '2022-05-26T21:19:55.000Z'
+                    updatedAt: '2022-05-27T13:07:36.523Z'
+              examples:
+                example-1:
+                  value:
+                    id: 2
+                    name: Science-fiction
+                    createdAt: '2022-05-26T21:19:55.000Z'
+                    updatedAt: '2022-05-27T13:07:36.523Z'
+        '400':
+          description: 'Bad Request: invalid token'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Update genre
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer token
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                firstName:
+                id:
                   type: string
-                lastName:
+                name:
                   type: string
-                email:
-                  type: string
-                dateOfBirth:
-                  type: string
-                  format: date
-              required:
-                - firstName
-                - lastName
-                - email
-                - dateOfBirth
+              x-examples:
+                example-1:
+                  id: '2'
+                  name: Science-fiction
             examples:
-              Create User Bob Fellow:
+              example-1:
                 value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
-                  dateOfBirth: '1996-08-24'
-        description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
+                  id: '2'
+                  name: Science-fiction
+        description: ''
+    parameters: []
 components:
   schemas:
     User:
       title: User
       type: object
-      description: ''
+      description: Table of users
       examples:
         - id: 142
-          firstName: Alice
-          lastName: Smith
-          email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
-          emailVerified: true
-          signUpDate: '2019-08-24'
+          username: alice.smith
+          password: 3xm5F2svg
+          firstname: Alice
+          lastname: Smith
+          admin: false
       properties:
         id:
           type: integer
           description: Unique identifier for the given user.
-        firstName:
+        username:
           type: string
-        lastName:
-          type: string
-        email:
+        password:
           type: string
           format: email
-        dateOfBirth:
+        firstname:
           type: string
-          format: date
-          example: '1997-10-31'
-        emailVerified:
+        lastname:
+          type: string
+        admin:
           type: boolean
-          description: Set to true if the user's email has been verified.
-        createDate:
-          type: string
-          format: date
-          description: The date that the user was created.
       required:
         - id
-        - firstName
-        - lastName
-        - email
-        - emailVerified
+        - username
+        - password
+        - firstname
+        - lastname
+        - admin
+      x-internal: true
+    Movie:
+      title: Movie
+      x-stoplight:
+        id: 5gzdg6dyebz37
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        director:
+          type: string
+        year:
+          type: number
+        users_id:
+          type: integer
+      required:
+        - id
+        - title
+        - director
+        - year
+      examples:
+        - id: 43
+          title: Fast and Furious 9
+          description: Car movie
+          director: Justin Lin
+          year: 2021
+          users_id: 7
+    Genre:
+      title: Genre
+      x-stoplight:
+        id: 8lho1ofz5ns9u
+      type: object
+      examples:
+        - id: '5'
+          name: Comedy
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - id
+        - name
+    Movie_has_genres:
+      title: Movie_has_genres
+      x-stoplight:
+        id: hx5mddy1xe188
+      type: object
+      properties:
+        id:
+          type: integer
+        movieId:
+          type: integer
+        genreId:
+          type: integer
+      examples:
+        - id: 54
+          movieId: 61
+          genreId: 9
+  securitySchemes:
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOmZhbHNlLCJpYXQiOjE2NTM2NDE3MjcsImV4cCI6MTY1MzY0NTMyN30.fAPhp7s1UNydVMR9VrPMOD0GB92B-zflNC-9lW0BZtM:
+      type: http
+      scheme: bearer
