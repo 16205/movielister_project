@@ -178,6 +178,10 @@ module.exports = {
         // Check password validity
         if (!PASSWORD_REGEX.test(password)) {
             return res.status(400).json({ 'error': 'Password must be between 4 and 8 characters and contain at least one number' });
+        } else {
+            bcrypt.hash(password, 5, bcryptedPassword => {
+                password = bcryptedPassword;
+            });
         }
 
         // Find user in database with id from token
