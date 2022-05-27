@@ -1,6 +1,4 @@
 openapi: 3.1.0
-x-stoplight:
-  id: n28a78h33j69c
 info:
   title: MovieListerAPI
   version: '1.0'
@@ -975,7 +973,4 @@ components:
         - id: 54
           movieId: 61
           genreId: 9
-  securitySchemes:
-    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOmZhbHNlLCJpYXQiOjE2NTM2NDE3MjcsImV4cCI6MTY1MzY0NTMyN30.fAPhp7s1UNydVMR9VrPMOD0GB92B-zflNC-9lW0BZtM:
-      type: http
-      scheme: bearer
+  securitySchemes: {}
