@@ -21,8 +21,8 @@ exports.router = (function() {
     apiRouter.route('/movies/new').post(moviesController.createMovie);
     apiRouter.route('/movies/').get(moviesController.getAllMovies);
     apiRouter.route('/movies/movie').get(moviesController.getMovie);
-    apiRouter.route('/movies/update').put(moviesController.updateMovie);
-    apiRouter.route('/movies/delete').delete(moviesController.deleteMovie);
+    apiRouter.route('/movies/movie/update').put(moviesController.updateMovie);
+    apiRouter.route('/movies/movie/delete').delete(moviesController.deleteMovie);
     apiRouter.route('/movies/search').get(moviesController.getMovie);
 
     // Genres routes
