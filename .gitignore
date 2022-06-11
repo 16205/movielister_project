@@ -1,3 +1,4 @@
 node_modules/
 .stoplight/
 .vscode/
+.angular/
