@@ -2,9 +2,11 @@
 var express     = require('express');
 var bodyParser  = require('body-parser');
 var apiRouter   = require('./apiRouter').router;
+var cors = require('cors');
 
 // Server instantiation
 var server = express()
+server.use(cors());
 
 // Body parser configuration
 server.use(bodyParser.urlencoded({ extended: true }));
