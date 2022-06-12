@@ -25,6 +25,7 @@ export class RestService {
   constructor(private http: HttpClient) { }
 
   getMovies(): Observable<any> {
-    return this.http.get<Movie>(endpoint + "movies", );
+    return this.http.get<Movie>(endpoint + "movies");
   }
+
 }
