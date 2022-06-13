@@ -17,7 +17,7 @@ module.exports = {
         var lastname    = req.body.lastname;
 
         // Check for empty user params
-        if (username == null || password == null || firstname == null || lastname == null) {
+        if (username == null || password == null || firstname == null || firstname.length == 0 || lastname == null || lastname.length == 0) {
             return res.status(400).json({ 'error': 'Missing parameters' });
         }
 
