@@ -20,6 +20,12 @@
         placeholder="Password"
       />
     </div>
-    <button type="submit" class="btn btn-block btn-primary">Sign in</button>
+    <div class="">
+      <button
+        class="btn btn-lg btn-primary btn-block"
+        type="submit"
+        [disabled]="!signinForm.valid">Sign in
+      </button>
+    </div>
   </form>
 </div>
