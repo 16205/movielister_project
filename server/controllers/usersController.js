@@ -76,7 +76,7 @@ module.exports = {
         var password    = req.body.password;
 
         // Check for empty user params
-        if (username == null || password == null) {
+        if (username == null || username.length == 0 || password == null || password.length == 0) {
             return res.status(400).json({ 'error': 'Missing parameters' });
         }
 
