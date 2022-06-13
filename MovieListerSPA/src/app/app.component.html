@@ -22,11 +22,17 @@
           <a class="nav-link" href="#">Search</a>
         </li>
       </ul>
-      <div class="btn-group">
+      <div *ngIf="isLoggedIn==false">
         <a class="btn" href="register" type="submit">Register</a>
         <a class="btn" href="login" type="submit">Login</a>
+      </div>
+      <div *ngIf="isLoggedIn==true">
+        <a class="btn" type="submit" (click)="logOut()">Logout</a>
       </div>
     </div>
   </div>
 </nav>
-<router-outlet></router-outlet>
+<br>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
