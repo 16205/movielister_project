@@ -140,7 +140,7 @@ module.exports = {
         }
         
         // Check for director length
-        if (DIRECTOR_LIMIT > director.length > 0) {
+        if (!(DIRECTOR_LIMIT > director.length > 0)) {
             return res.status(400).json({ 'error': 'Director must be less than ' + DIRECTOR_LIMIT + ' characters' });
         }
 
