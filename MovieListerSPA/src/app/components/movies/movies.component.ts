@@ -3,11 +3,11 @@ import { RestService, Movie } from '../../shared/rest.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-movie',
-  templateUrl: './movie.component.html',
-  styleUrls: ['./movie.component.css']
+  selector: 'app-movies',
+  templateUrl: './movies.component.html',
+  styleUrls: ['./movies.component.css']
 })
-export class MovieComponent implements OnInit {
+export class MoviesComponent implements OnInit {
 
   movies: Movie[] = [];
 
