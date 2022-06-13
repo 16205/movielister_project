@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { MovieComponent } from './components/movie/movie.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthInterceptor } from './shared/authconfig.interceptor';
-import { RegisterComponent } from './components/register/register.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [

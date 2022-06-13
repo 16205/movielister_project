@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from './user';
+import { NewUser } from './NewUser';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
@@ -16,7 +17,7 @@ export class AuthService {
   constructor(private http: HttpClient, public router: Router) { }
 
   // Sign up
-  signUp(user: User): Observable<any> {
+  signUp(user: NewUser): Observable<any> {
     return this.http.post(this.endpoint + 'register', user).pipe(catchError(this.handleError));
   }
 
