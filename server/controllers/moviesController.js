@@ -41,7 +41,7 @@ module.exports = {
 
     getMovie: function(req, res) {
         // Params
-        var id = req.params.id;
+        var id = req.query.id;
         var title = req.query.title;
         
         // Get movie by id
