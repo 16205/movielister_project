@@ -6,16 +6,9 @@ import { RegisterComponent } from './components/register/register.component';
 import { AddMovieComponent } from './components/add-movie/add-movie.component';
 import { GenresComponent } from './components/genres/genres.component';
 import { MovieDetailComponent } from './components/movie-detail/movie-detail.component';
+import { EditMovieComponent } from './components/edit-movie/edit-movie.component';
 
 const routes: Routes = [
-  {
-    path: 'movies',
-    component: MoviesComponent
-  },
-  {
-    path: 'genres',
-    component: GenresComponent
-  },
   {
     path: 'login',
     component: LoginComponent
@@ -25,12 +18,24 @@ const routes: Routes = [
     component: RegisterComponent
   },
   {
+    path: 'movies',
+    component: MoviesComponent
+  },
+  {
     path: 'movies/add',
     component: AddMovieComponent
   },
   {
     path: 'movies/movie/:id',
     component: MovieDetailComponent
+  },
+  {
+    path: 'movies/movie/:id/edit',
+    component: EditMovieComponent
+  },
+  {
+    path: 'genres',
+    component: GenresComponent
   }
 ];
 

@@ -40,6 +40,10 @@ export class RestService {
     return this.http.post(endpoint + "movies/new", movie);
   }
 
+  editMovie(movie: Movie): Observable<any> {
+    return this.http.put(endpoint + "movies/edit", movie);
+  }
+
   getGenres(): Observable<any> {
     return this.http.get<Genre>(endpoint + "genres");
   }

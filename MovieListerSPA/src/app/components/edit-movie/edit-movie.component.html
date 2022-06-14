@@ -1,0 +1,76 @@
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <form class="form-addMovie" [formGroup]="editMovieForm" (ngSubmit)="editMovie()">
+        <h3 class="form-title">Edit Movie</h3>
+
+        <div class="form mb-3">
+          <label for="floatinginput">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInput"
+            formControlName="title"
+            placeholder="Enter movie title"
+            required
+          />
+        </div>
+
+        <div class="form mb-3">
+          <label for="floatinginput">Director</label>
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInput"
+            formControlName="director"
+            placeholder="Enter movie director"
+            required
+          />
+        </div>
+
+        <div class="form mb-3">
+          <label for="floatinginput">Year</label>
+          <input
+            type="number"
+            min="1900"
+            max="2099"
+            step="1"
+            class="form-control"
+            id="floatingInput"
+            formControlName="year"
+            placeholder="Enter release year"
+            required
+          />
+        </div>
+
+        <div class="form mb-3">
+          <label for="genres" class="form-label mt-4">Genres</label>
+          <select class="form-select" id="genres" formControlName="genres">
+            <option *ngFor="let genre of genres">
+              {{genre.name}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form mb-3">
+          <label for="floatinginput" class="form-label mt-4">Description</label>
+          <textarea
+            class="form-control"
+            id="floatingInput"
+            rows="5"
+            formControlName="description"
+            placeholder="Enter movie description"
+            required
+          ></textarea>
+        </div>
+
+        <br>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+      </form>
+    </div>
+  </div>
+</div>
+

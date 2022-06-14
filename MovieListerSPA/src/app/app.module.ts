@@ -12,7 +12,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { AddMovieComponent } from './components/add-movie/add-movie.component';
 import { GenresComponent } from './components/genres/genres.component';
 import { MovieDetailComponent } from './components/movie-detail/movie-detail.component';
-import { MovieEditComponent } from './components/movie-edit/movie-edit.component';
+import { EditMovieComponent } from './components/edit-movie/edit-movie.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,7 @@ import { MovieEditComponent } from './components/movie-edit/movie-edit.component
     AddMovieComponent,
     GenresComponent,
     MovieDetailComponent,
-    MovieEditComponent
+    EditMovieComponent
   ],
   imports: [
     BrowserModule,
