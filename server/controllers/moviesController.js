@@ -17,7 +17,7 @@ module.exports = {
         // Get all movies, alphabetically ordered by title (by default)
         models.movie.findAll({
             order: [(order != null) ? order.split(':') : ['title', 'ASC']],
-            attributes: ['title', 'director', 'year'],
+            attributes: ['id', 'title', 'director', 'year'],
             // Get genres for every movie
             include: [{
                 model: models.genre,
