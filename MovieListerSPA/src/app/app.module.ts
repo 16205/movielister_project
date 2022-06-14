@@ -8,14 +8,22 @@ import { AppComponent } from './app.component';
 import { MoviesComponent } from './components/movies/movies.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthInterceptor } from './shared/authconfig.interceptor';
-import { RegisterComponent } from './register/register.component';
+import { RegisterComponent } from './components/register/register.component';
+import { AddMovieComponent } from './components/add-movie/add-movie.component';
+import { GenresComponent } from './components/genres/genres.component';
+import { MovieDetailComponent } from './components/movie-detail/movie-detail.component';
+import { MovieEditComponent } from './components/movie-edit/movie-edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MoviesComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    AddMovieComponent,
+    GenresComponent,
+    MovieDetailComponent,
+    MovieEditComponent
   ],
   imports: [
     BrowserModule,
