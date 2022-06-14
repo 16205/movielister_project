@@ -1,22 +1,31 @@
 <div class="card">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Title</th>
-        <th scope="col">Director</th>
-        <th scope="col">Release year</th>
-        <th scope="col">Genres</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="table-default" *ngFor="let movie of movies">
-        <td scope="row"> {{movie.title}} </td>
-        <td>{{movie.director}}</td>
-        <td>{{movie.year}}</td>
-        <td>
-          <span *ngFor="let genre of movie.genres; last as isLast">{{genre.name}}<span *ngIf="!isLast">, </span></span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="card-header">
+    Movies
+  </div>
+  <div class="card-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Director</th>
+          <th scope="col">Release year</th>
+          <th scope="col">Genres</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-default" *ngFor="let movie of movies">
+          <td scope="row"><a href="movies/movie/{{movie.id}}">{{movie.title}}</a></td>
+          <td>{{movie.director}}</td>
+          <td>{{movie.year}}</td>
+          <td>
+            <span *ngFor="let genre of movie.genres; last as isLast">{{genre.name}}<span *ngIf="!isLast">, </span></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+<br>
+<a routerLink="add">
+  <button class="btn btn-primary col-md-2" type="submit">Add new movie</button>
+</a>
