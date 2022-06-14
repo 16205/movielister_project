@@ -23,9 +23,8 @@ export class AuthService {
 
   // Sign in
   signIn(user: User) {
-    return this.http
-      .post<any>(this.endpoint + 'login', user)
-      .subscribe((res: any) => {
+    return this.http.post<any>(this.endpoint + 'login', user).subscribe(
+      (res: any) => {
         localStorage.setItem('access_token', res.token);
         this.getUserProfile(res.userId).subscribe((res) => {
           this.currentUser = res;
@@ -71,6 +70,7 @@ export class AuthService {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     console.log(errorMessage);
+    window.alert(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 

@@ -1,31 +1,36 @@
-<div class="auth-wrapper">
-  <form class="form-signin" [formGroup]="signinForm" (ngSubmit)="loginUser()">
-    <h3 class="h3 mb-3 font-weight-normal text-center">Please sign in</h3>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
     <div class="form-group">
-      <label>Username</label>
-      <input
-        type="username"
-        class="form-control"
-        formControlName="username"
-        placeholder="Enter username"
-        required
-      />
+      <form class="form-signin" [formGroup]="signinForm" (ngSubmit)="loginUser()">
+        <h3 class="h3 mb-3 font-weight-normal text-center">Please sign in</h3>
+        <div class="form-floating mb-3">
+          <input
+            type="username"
+            class="form-control"
+            id="floatingInput"
+            formControlName="username"
+            placeholder="Enter username"
+            required
+          />
+          <label for="floatinginput">Username</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            id="floatingPassword"
+            formControlName="password"
+            placeholder="Password"
+          />
+          <label for="floatingPassword">Password</label>
+        </div>
+        <br>
+        <!-- <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div> -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input
-        type="password"
-        class="form-control"
-        formControlName="password"
-        placeholder="Password"
-      />
-    </div>
-    <div class="">
-      <button
-        class="btn btn-lg btn-primary btn-block"
-        type="submit"
-        [disabled]="!signinForm.valid">Sign in
-      </button>
-    </div>
-  </form>
+  </div>
 </div>

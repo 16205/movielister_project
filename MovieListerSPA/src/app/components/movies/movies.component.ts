@@ -19,9 +19,9 @@ export class MoviesComponent implements OnInit {
 
   getMovies() {
     this.rest.getMovies().subscribe(
-      data => {
+      res => {
         // console.log(data);
-        this.movies = data;
+        this.movies = res;
       }
     );
   }
